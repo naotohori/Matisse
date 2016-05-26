@@ -4,7 +4,6 @@ use mtmod
 
 implicit none
 
-!integer,parameter :: Naa=60    !!アミノ酸の個数
 integer,parameter :: Naa=100    !!アミノ酸の個数
 integer,parameter :: Niter = 1000000000
 integer,parameter :: Nrep = 100
@@ -97,7 +96,7 @@ do istep=1,Niter
             i_target = int(Naa * grnd()) + 1
 
             if (i_target == 1 .OR. i_target == Naa) then
-               call move_tarminal(Naa,i_target,loc_try)
+               call move_terminal(Naa,i_target,loc_try)
 
             else
                ! rigid body
@@ -320,49 +319,6 @@ END SUBROUTINE calc_energy
 
 !========================================================================
 !========================================================================
-FUNCTION rand01(idum)
-!***********************************************************************
-!
-!     create a random number distributed uniformly in (0,1).
-!     The 'ran2' routine in Numerical Recipes-2nd edition.
-!
-!***********************************************************************
-integer, intent(inout) :: idum
-real :: rand01
-
-integer, parameter :: IM1=2147483563,IM2=2147483399,IMM1=IM1-1, &
-     IA1=40014,IA2=40692,IQ1=53668,IQ2=52774,IR1=12211,IR2=3791, &
-     NTAB=32,NDIV=1+IMM1/NTAB
-real, parameter :: AM=1./IM1,EPS=1.2e-7,RNMX=1.-EPS
-integer, save :: iv(NTAB),iy,idum2
-integer :: j,k
-
-data idum2/123456789/, iv/NTAB*0/, iy/0/
-
-      if (idum.le.0) then
-        idum=max(-idum,1)
-        idum2=idum
-        do j=NTAB+8,1,-1
-          k=idum/IQ1
-          idum=IA1*(idum-k*IQ1)-k*IR1
-          if (idum.lt.0) idum=idum+IM1
-          if (j.le.NTAB) iv(j)=idum
-        enddo
-        iy=iv(1)
-      endif
-      k=idum/IQ1
-      idum=IA1*(idum-k*IQ1)-k*IR1
-      if (idum.lt.0) idum=idum+IM1
-      k=idum2/IQ2
-      idum2=IA2*(idum2-k*IQ2)-k*IR2
-      if (idum2.lt.0) idum2=idum2+IM2
-      j=1+iy/NDIV
-      iy=iv(j)-idum2
-      iv(j)=idum
-      if(iy.lt.1)iy=iy+IMM1
-      rand01=min(AM*iy,RNMX)
-      return
-END function rand01
 
 
 subroutine loc2vec(Naa,loc,vec)
@@ -471,7 +427,7 @@ subroutine loc2xy(Naa,loc,xy)
    enddo
 endsubroutine loc2xy
 
-subroutine move_tarminal(Naa,i_target,loc_try)
+subroutine move_terminal(Naa,i_target,loc_try)
    implicit none
    integer, intent(in) :: Naa, i_target
    integer, intent(inout) :: loc_try(Naa-2)
@@ -497,7 +453,7 @@ subroutine move_tarminal(Naa,i_target,loc_try)
    elseif (loc_try(loc_target) == -2) then
       loc_try(loc_target) = +1
    endif
-endsubroutine move_tarminal
+endsubroutine move_terminal
 
 subroutine move_rigid(Naa,i_target,loc_try)
    implicit none
